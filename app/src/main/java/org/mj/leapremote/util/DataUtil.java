@@ -2,9 +2,8 @@ package org.mj.leapremote.util;
 
 import android.content.SharedPreferences;
 
-import org.json.JSONArray;
 import org.mj.leapremote.BaseApplication;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -12,38 +11,38 @@ public class DataUtil {
     public static SharedPreferences sharedPreferences = BaseApplication.getInstance().getSharedPreferences("yan",MODE_PRIVATE);
     public static void save() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("agree", Define.agree);
-        if(Define.user!=null) {
-            editor.putString("username", Define.user.getUsername());
-            if(Define.autoLogin) {
+        editor.putBoolean("agree", Const.agree);
+        if(Const.user!=null) {
+            editor.putString("username", Const.user.getUsername());
+            if(Const.autoLogin) {
                 editor.putBoolean("autoLogin", true);
-                editor.putString("password", Define.user.getPassword());
+                editor.putString("password", Const.user.getPassword());
             } else {
                 editor.putBoolean("autoLogin", false);
             }
         }
 
-        if(Define.neverShowMessageDialog!=null)
-            editor.putString("neverShowMessageDialog", Define.neverShowMessageDialog);
-        if(Define.neverShowVersionDialog !=null)
-            editor.putString("neverShowVersionDialog", Define.neverShowVersionDialog);
+        if(Const.neverShowMessageDialog!=null)
+            editor.putString("neverShowMessageDialog", Const.neverShowMessageDialog);
+        if(Const.neverShowVersionDialog !=null)
+            editor.putString("neverShowVersionDialog", Const.neverShowVersionDialog);
         editor.putString("directDevices", DevicesUtil.getDirectDevicesJSONString());
-        editor.putString("savedGestures", Define.savedGestures);
-        editor.putBoolean("isSoftwareActivated", Define.isSoftwareActivated);
-        editor.putString("deviceId", Define.deviceId);
+        editor.putString("savedGestures", Const.savedGestures);
+        editor.putBoolean("isSoftwareActivated", Const.isSoftwareActivated);
+        editor.putString("deviceId", Const.deviceId);
         editor.apply();
     }
 
     public static void load() {
-        Define.autoLoginUsername = sharedPreferences.getString("username", "");
-        Define.autoLoginPassword = sharedPreferences.getString("password", "");
-        Define.autoLogin = sharedPreferences.getBoolean("autoLogin", false);
-        Define.agree = sharedPreferences.getBoolean("agree", false);
-        Define.neverShowMessageDialog = sharedPreferences.getString("neverShowMessageDialog", null);
-        Define.neverShowVersionDialog = sharedPreferences.getString("neverShowVersionDialog", null);
-        Define.savedGestures = sharedPreferences.getString("savedGestures", "[]");
-        Define.isSoftwareActivated = sharedPreferences.getBoolean("isSoftwareActivated", false);
-        Define.deviceId = sharedPreferences.getString("deviceId", Utils.getUniquePsuedoID());
+        Const.autoLoginUsername = sharedPreferences.getString("username", "");
+        Const.autoLoginPassword = sharedPreferences.getString("password", "");
+        Const.autoLogin = sharedPreferences.getBoolean("autoLogin", false);
+        Const.agree = sharedPreferences.getBoolean("agree", false);
+        Const.neverShowMessageDialog = sharedPreferences.getString("neverShowMessageDialog", null);
+        Const.neverShowVersionDialog = sharedPreferences.getString("neverShowVersionDialog", null);
+        Const.savedGestures = sharedPreferences.getString("savedGestures", "[]");
+        Const.isSoftwareActivated = sharedPreferences.getBoolean("isSoftwareActivated", false);
+        Const.deviceId = sharedPreferences.getString("deviceId", Utils.getUniquePsuedoID());
         DevicesUtil.setDirectDevicesJSONString(sharedPreferences.getString("directDevices", null));
     }
 }

@@ -23,7 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mask.mediaprojection.interfaces.MediaCodecCallback;
 import com.mask.mediaprojection.interfaces.ScreenCaptureCallback;
 import com.mask.mediaprojection.utils.MediaProjectionHelper;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.cs.direct.server.ServerHandler;
 import org.mj.leapremote.ui.fragments.QuickConnectFragment;
 import org.mj.leapremote.R;
@@ -73,7 +73,7 @@ public class ServerService extends Service {
                     startForeground(1, getNotification(getString(R.string.leap_remote_is_running), "远程控制服务正在运行"));
                 }
                 mService = this;
-                server = new Server(Define.defaultPort);
+                server = new Server(Const.defaultPort);
                 server.start();
                 //loopSendImage();
                 break;
@@ -137,7 +137,7 @@ public class ServerService extends Service {
                     , PendingIntent.FLAG_IMMUTABLE);
         } else {
             contentIntent = PendingIntent.getActivity(this, 1012, clickIntent
-                    , PendingIntent.FLAG_ONE_SHOT);
+                    , PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         }
         //创建一个通知消息的构造器
         Notification.Builder builder = new Notification.Builder(this);
@@ -205,7 +205,7 @@ public class ServerService extends Service {
         startRecord(-1);
     }
     private void startRecord(int resolution) {
-        Define.isControlled = true;
+        Const.isControlled = true;
         sendingData = 0;
         first = true;
         firstReceived = false;
@@ -278,8 +278,8 @@ public class ServerService extends Service {
             jsonObject.put("first", true);
             jsonObject.put("portrait", getResources().getConfiguration().orientation==Configuration.ORIENTATION_PORTRAIT);
             jsonObject.put("hevc", MediaProjectionHelper.getInstance().isHevc());
-            jsonObject.put("width", Define.displayMetrics.widthPixels);
-            jsonObject.put("height", Define.displayMetrics.heightPixels);
+            jsonObject.put("width", Const.displayMetrics.widthPixels);
+            jsonObject.put("height", Const.displayMetrics.heightPixels);
         }
         synchronized (index) {
             jsonObject.put("index", index);
@@ -297,9 +297,9 @@ public class ServerService extends Service {
                 }*/
         int orientation = getResources().getConfiguration().orientation;
         jsonObject.put("rotate", (orientation==Configuration.ORIENTATION_LANDSCAPE
-                &&Define.displayMetrics.heightPixels>=Define.displayMetrics.widthPixels)
+                && Const.displayMetrics.heightPixels>= Const.displayMetrics.widthPixels)
                 || (orientation==Configuration.ORIENTATION_PORTRAIT
-                &&Define.displayMetrics.heightPixels<Define.displayMetrics.widthPixels));
+                && Const.displayMetrics.heightPixels< Const.displayMetrics.widthPixels));
         long start = System.currentTimeMillis();
         for(ChannelHandlerContext ctx : Handlers.handlers) {
             ServerHandler.send(ctx, jsonObject.toJSONString());
@@ -319,7 +319,7 @@ public class ServerService extends Service {
     }
 
     private void stopRecord() {
-        Define.isControlled = false;
+        Const.isControlled = false;
         MediaProjectionHelper.getInstance().stopMediaCodec();
     }
 
@@ -328,7 +328,7 @@ public class ServerService extends Service {
             while (!stopped) {
                 doScreenCapture();
                 try {
-                    Thread.sleep(Define.wait);
+                    Thread.sleep(Const.wait);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -347,12 +347,12 @@ public class ServerService extends Service {
                     jsonObject.put("type", "image");
                     jsonObject.put("image", ZipCompress.compress(
                             ImageUtils.bitmapToByteArray(
-                                    ImageUtils.compressBitmap(bitmap, (float)1/Define.scale), Define.quality)));
+                                    ImageUtils.compressBitmap(bitmap, (float)1/ Const.scale), Const.quality)));
                     int orientation = getResources().getConfiguration().orientation;
                     jsonObject.put("rotate", (orientation== Configuration.ORIENTATION_LANDSCAPE
-                            &&Define.displayMetrics.heightPixels>=Define.displayMetrics.widthPixels)
+                            && Const.displayMetrics.heightPixels>= Const.displayMetrics.widthPixels)
                             || (orientation==Configuration.ORIENTATION_PORTRAIT
-                            &&Define.displayMetrics.heightPixels<Define.displayMetrics.widthPixels));
+                            && Const.displayMetrics.heightPixels< Const.displayMetrics.widthPixels));
                     long start = System.currentTimeMillis();
                     for(ChannelHandlerContext ctx : Handlers.handlers) {
                         ServerHandler.send(ctx, jsonObject.toJSONString());

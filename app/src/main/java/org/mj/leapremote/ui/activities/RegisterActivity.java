@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.model.User;
 import org.mj.leapremote.service.HttpService;
@@ -99,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                             if(!success)
                                 runOnUiThread(() -> reg_btn_code.setEnabled(true));
                         } else {
-                            Define.user = user;
+                            Const.user = user;
                             DataUtil.save();
                             runOnUiThread(() -> {
                                 LoginActivity.INSTANCE.finish();
@@ -163,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             showErrorMessage(getString(R.string.unableToParseReturnData));
                                     }
                                 } else {
-                                    Define.user = user;
+                                    Const.user = user;
                                     DataUtil.save();
                                     runOnUiThread(() -> {
                                         LoginActivity.INSTANCE.finish();

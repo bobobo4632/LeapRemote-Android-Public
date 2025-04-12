@@ -8,7 +8,7 @@ import com.alibaba.fastjson.TypeReference;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.model.Device;
 import org.mj.leapremote.model.User;
 import org.mj.leapremote.ui.activities.LogoActivity;
@@ -52,8 +52,8 @@ public class HttpService {
 
     static {
         BasicHttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, Define.connectTimeout);
-        HttpConnectionParams.setSoTimeout(httpParams, Define.socketTimeout);
+        HttpConnectionParams.setConnectionTimeout(httpParams, Const.connectTimeout);
+        HttpConnectionParams.setSoTimeout(httpParams, Const.socketTimeout);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", new PlainSocketFactory(), 80));
         schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
@@ -63,8 +63,8 @@ public class HttpService {
 
     public static String httpGet(String url) throws IOException {
         HttpGet httpGet = new HttpGet(url);
-        if(!Define.ipv6Support && !Utils.stringIsEmpty(Define.host))
-            httpGet.setHeader("Host", Define.host);
+        if(!Const.ipv6Support && !Utils.stringIsEmpty(Const.host))
+            httpGet.setHeader("Host", Const.host);
         HttpResponse res = httpClient.execute(httpGet);
         return EntityUtils.toString(res.getEntity(), "utf-8");
     }
@@ -72,8 +72,8 @@ public class HttpService {
     public static String httpPost(String url, String entity) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(new StringEntity(entity));
-        if(!Define.ipv6Support && !Utils.stringIsEmpty(Define.host))
-            httpPost.setHeader("Host", Define.host);
+        if(!Const.ipv6Support && !Utils.stringIsEmpty(Const.host))
+            httpPost.setHeader("Host", Const.host);
         HttpResponse res = httpClient.execute(httpPost);
         return EntityUtils.toString(res.getEntity(), "utf-8");
     }
@@ -100,21 +100,21 @@ public class HttpService {
         AtomicBoolean stop = new AtomicBoolean(false);
         new Thread(() -> {
             try {
-                Thread.sleep(Define.connectTimeout);
+                Thread.sleep(Const.connectTimeout);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (!Define.ipGot)
+            if (!Const.ipGot)
                 stop.set(true);
         }).start();
-        while (!Define.ipGot && !stop.get()) {
+        while (!Const.ipGot && !stop.get()) {
             try {
                 Thread.sleep(0);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        return Define.ipGot;
+        return Const.ipGot;
     }
 
     public static User login(String usernameOrEmail, String password) {
@@ -123,22 +123,22 @@ public class HttpService {
         Map<String, String> map = new HashMap<>();
         map.put("username", usernameOrEmail);
         map.put("password", password);
-        map.put("device", "Android");
+        map.put("edition", "Android");
         map.put("ipAddress", getPublicIp());
-        map.put("version", Define.version);
+        map.put("version", Const.version);
         DeviceUtil deviceUtil = new DeviceUtil(LogoActivity.INSTANCE!=null?LogoActivity.INSTANCE: MainActivity.INSTANCE);
         map.put("os", deviceUtil.getModel());
         map.put("androidVersion", deviceUtil.getSDKVersionName());
-        map.put("deviceId", deviceUtil.getUniqueDeviceId());
+        map.put("deviceId", deviceUtil.getUniqueDeviceId(false));
         map.put("package", (LogoActivity.INSTANCE!=null?LogoActivity.INSTANCE: MainActivity.INSTANCE).getPackageName());
-        String url = Define.server + "user/login";
+        String url = Const.serverAddr + "user/login";
         url = HttpUtils.setParamToUrl(url, map);
         try {
             JSONObject json = httpGetJSON(url);
             int errno = json.getInteger("errno");
             if (errno == 0) {
                 if(json.containsKey("isExamining") && json.getBoolean("isExamining"))
-                    Define.isExamining = true;
+                    Const.isExamining = true;
                 return JSON.parseObject(json.getString("user"), new TypeReference<User>(){});
             }
             User user = new User();
@@ -153,7 +153,7 @@ public class HttpService {
     public static User register(Map<String, String> map) {
         if(!ipGotWait())
             return null;
-        String url = Define.server + "user/register";
+        String url = Const.serverAddr + "user/register";
         url = HttpUtils.setParamToUrl(url, map);
         try {
             JSONObject json = httpGetJSON(url);
@@ -174,8 +174,8 @@ public class HttpService {
         if(!ipGotWait())
             return null;
         Map<String, String> map = new HashMap<>();
-        map.put("version", Define.version);
-        String url = Define.server + "core/checkVersionAndroidNew";
+        map.put("version", Const.version);
+        String url = Const.serverAddr + "core/checkVersionAndroidNew";
         url = HttpUtils.setParamToUrl(url, map);
         try {
             return httpGetJSON(url);
@@ -186,7 +186,7 @@ public class HttpService {
 
     public static boolean logout() {
         refreshIpv4AndIpv6();
-        String url = Define.server + "user/logout";
+        String url = Const.serverAddr + "user/logout";
         try {
             return httpGet(url).equals("true");
         } catch (Exception e) {
@@ -200,7 +200,7 @@ public class HttpService {
         Map<String, String> map = new HashMap<>();
         map.put("connectId", connectId);
         map.put("connectPin", connectPin);
-        String url = Define.server + "core/getDeviceByConnectId";
+        String url = Const.serverAddr + "core/getDeviceByConnectId";
         url = HttpUtils.setParamToUrl(url, map);
         try {
             JSONObject json = httpGetJSON(url);
@@ -218,9 +218,19 @@ public class HttpService {
         return null;
     }
 
+    public static String getMessageContent(String server) {
+        String url = server + "core/getMessageContent?version="+ Const.version+"&device=android";
+        try {
+            return httpGet(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static String getMessageContent() {
         refreshIpv4AndIpv6();
-        String url = Define.server + "core/getMessageContent?version="+Define.version+"&device=android";
+        String url = Const.serverAddr + "core/getMessageContent?version="+ Const.version+"&device=android";
         try {
             return httpGet(url);
         } catch (Exception e) {
@@ -231,7 +241,7 @@ public class HttpService {
 
     public static JSONArray helpPingIp(JSONArray hosts) {
         refreshIpv4AndIpv6();
-        String url = Define.server + "core/helpPingIp?deviceId="+Define.deviceId+"&hosts="+ URLEncoder.encode(hosts.toString());
+        String url = Const.serverAddr + "core/helpPingIp?deviceId="+ Const.deviceId+"&hosts="+ URLEncoder.encode(hosts.toString());
         try {
             return httpGetJSON(url).getJSONArray("result");
         } catch (Exception e) {
@@ -242,7 +252,7 @@ public class HttpService {
 
     public static String publicIp(JSONArray hosts) {
         refreshIpv4AndIpv6();
-        String url = Define.server + "core/publicIp?deviceId="+Define.deviceId;
+        String url = Const.serverAddr + "core/publicIp?deviceId="+ Const.deviceId;
         try {
             return httpPost(url, hosts.toString());
         } catch (Exception e) {
@@ -254,7 +264,7 @@ public class HttpService {
     public static int forgetPasswordEmail(String username) {
         if (!ipGotWait())
             return -1;
-        String url = Define.server + "user/forgetPasswordEmail";
+        String url = Const.serverAddr + "user/forgetPasswordEmail";
         Map<String, String> map = new HashMap<>();
         map.put("username", username);
         url = HttpUtils.setParamToUrl(url, map);
@@ -269,7 +279,7 @@ public class HttpService {
     public static int forgetPassword(Map<String, String> map) {
         if (!ipGotWait())
             return -1;
-        String url = Define.server + "user/forgetPassword";
+        String url = Const.serverAddr + "user/forgetPassword";
         url = HttpUtils.setParamToUrl(url, map);
         try {
             return httpGetJSON(url).getInteger("errno");

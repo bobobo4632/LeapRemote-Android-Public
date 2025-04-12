@@ -26,7 +26,7 @@ import com.mask.mediaprojection.utils.MediaProjectionHelper;
 
 import org.mj.leapremote.service.HttpService;
 import org.mj.leapremote.ui.activities.ControlActivity;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.LogUtil;
 import org.mj.leapremote.NotificationHelper;
 import org.mj.leapremote.R;
@@ -37,8 +37,6 @@ import org.mj.leapremote.util.ClientHelper;
 import org.mj.leapremote.util.DiscoverNetIpUtil;
 import org.mj.leapremote.util.NetWorkUtil;
 import org.mj.leapremote.util.Utils;
-
-import java.util.List;
 
 public class QuickConnectFragment extends Fragment {
     public EditText hostText;
@@ -211,10 +209,10 @@ public class QuickConnectFragment extends Fragment {
             request.put("type", "connect");
             request.put("connectId", connectIdText.getText().toString());
             request.put("connectPin", connectPinText.getText().toString());
-            Define.temporaryId = request.getString("connectId");
-            Define.temporaryPin = request.getString("connectPin");
+            Const.temporaryId = request.getString("connectId");
+            Const.temporaryPin = request.getString("connectPin");
             ClientHelper.sendMessage(getActivity().getApplicationContext(), request.toJSONString());
-            Define.direct = false;
+            Const.direct = false;
         });
         connectDirect.setOnClickListener(v -> {
             if(NettyClientDirect.INSTANCE !=null) {
@@ -222,7 +220,7 @@ public class QuickConnectFragment extends Fragment {
             }
             String host = hostText.getText().toString();
             //String portString = portText.getText().toString();
-            String portString = String.valueOf(Define.defaultPort);
+            String portString = String.valueOf(Const.defaultPort);
             if(!Utils.checkPort(portString) || Utils.stringIsEmpty(host)) {
                 Toast.makeText(getActivity(), R.string.host_or_port_wrong_format, Toast.LENGTH_SHORT).show();
                 return;
@@ -231,7 +229,7 @@ public class QuickConnectFragment extends Fragment {
                     , new NettyClientDirect.OnConnectSuccessCallback() {
                 @Override
                 public void success() {
-                    Define.direct = true;
+                    Const.direct = true;
                     startActivity(new Intent(getActivity(), ControlActivity.class));
                 }
 
@@ -245,8 +243,8 @@ public class QuickConnectFragment extends Fragment {
     }
 
     public void updateConnectIdAndPin() {
-        ((TextView)view.findViewById(R.id.connect_id_text_view)).setText(String.valueOf(Define.connectId));
-        ((TextView)view.findViewById(R.id.connect_pin_text_view)).setText(String.valueOf(Define.connectPin));
+        ((TextView)view.findViewById(R.id.connect_id_text_view)).setText(String.valueOf(Const.connectId));
+        ((TextView)view.findViewById(R.id.connect_pin_text_view)).setText(String.valueOf(Const.connectPin));
     }
 
 

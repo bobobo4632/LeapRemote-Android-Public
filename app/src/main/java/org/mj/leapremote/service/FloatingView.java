@@ -114,22 +114,20 @@ public class FloatingView extends Service implements View.OnClickListener {
     public void onClick(View v) {
         //Log.d("onClick","THIS IS CLICKED");
         Intent intent = new Intent(getApplicationContext(), AutoService.class);
-        switch (v.getId()) {
-            case R.id.start:
-                //Log.d("START","THIS IS STARTED");
-                int[] location = new int[2];
-                myFloatingView.getLocationOnScreen(location);
-                intent.putExtra("action", "play");
-                intent.putExtra("x", location[0] - 1);
-                intent.putExtra("y", location[1] - 1);
-                break;
-            case R.id.stop:
-                intent.putExtra("action", "stop");
-                mWindowManager.removeView(myFloatingView);
-                Intent appMain = new Intent(getApplicationContext(), QuickConnectFragment.class);
+        if(v.getId()==R.id.start) {
+            //Log.d("START","THIS IS STARTED");
+            int[] location = new int[2];
+            myFloatingView.getLocationOnScreen(location);
+            intent.putExtra("action", "play");
+            intent.putExtra("x", location[0] - 1);
+            intent.putExtra("y", location[1] - 1);
+        } else if (v.getId()==R.id.stop) {
+            intent.putExtra("action", "stop");
+            mWindowManager.removeView(myFloatingView);
+            Intent appMain = new Intent(getApplicationContext(), QuickConnectFragment.class);
 
-                //getApplication().startActivity(appMain);
-                //requires the FLAG_ACTIVITY_NEW_TASK flag
+            //getApplication().startActivity(appMain);
+            //requires the FLAG_ACTIVITY_NEW_TASK flag
         }
         getApplication().startService(intent);
     }

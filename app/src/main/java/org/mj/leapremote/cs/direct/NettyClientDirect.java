@@ -2,7 +2,7 @@ package org.mj.leapremote.cs.direct;
 
 import android.app.Activity;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.coder.MessagePackDecoder;
 import org.mj.leapremote.coder.MessagePackEncoder;
 
@@ -122,7 +122,7 @@ public class NettyClientDirect extends Thread {
             channel = bootstrap.connect(host, port).sync().channel();
             JSONObject object = new JSONObject();
             object.put("type", "deviceId");
-            object.put("deviceId", Define.deviceId);
+            object.put("deviceId", Const.deviceId);
             sendMessage(object.toString());
             connected = true;
             connectSuccessCallback.success();

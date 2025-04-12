@@ -79,7 +79,7 @@ public class ForeService extends Service {
                     , PendingIntent.FLAG_IMMUTABLE);
         } else {
             contentIntent = PendingIntent.getActivity(this, 1012, clickIntent
-                    , PendingIntent.FLAG_ONE_SHOT);
+                    , PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         }
         //创建一个通知消息的构造器
         Notification.Builder builder = new Notification.Builder(this);

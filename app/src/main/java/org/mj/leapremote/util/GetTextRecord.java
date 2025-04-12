@@ -1,21 +1,57 @@
 package org.mj.leapremote.util;
 
-import com.alibaba.fastjson.JSON;
+import org.mj.leapremote.Const;
 
 import org.xbill.DNS.Lookup;
 import org.xbill.DNS.Record;
+import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.TXTRecord;
 import org.xbill.DNS.Type;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GetTextRecord {
     public static void main(String[] args) {
     }
 
     public static String getATxt(String domain) {
+        List<String> got = new ArrayList<>();
+        for(String server : Const.dnsServers) {
+            new Thread(() -> {
+                String result = getATxt(domain, server);
+                if (!Utils.stringIsEmpty(result)) {
+                    got.add(result);
+                }
+            }).start();
+        }
+        AtomicBoolean wait = new AtomicBoolean(true);
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+            }
+            wait.set(false);
+        }).start();
+        while (wait.get()) {
+            try {
+                Thread.sleep(0);
+            } catch (InterruptedException e) {
+                break;
+            }
+            if (!got.isEmpty()) {
+                return got.get(0);
+            }
+        }
+        return "";
+    }
+
+    public static String getATxt(String domain, String dnsServer) {
         try {
             Lookup lookup = new Lookup(domain, Type.TXT);
+            if(!Utils.stringIsEmpty(dnsServer))
+                lookup.setResolver(new SimpleResolver(dnsServer));
             Record[] records = lookup.run();
             if (records==null||records.length==0)
                 return "";

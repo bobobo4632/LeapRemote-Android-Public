@@ -118,7 +118,7 @@ public class Server extends Thread {
                         }
                     });
             // 开启服务，绑定端口，同步等待成功
-            f = bootstrap.bind(port).sync();
+            f = bootstrap.bind("[::]", port).sync();
             System.out.println("服务端已启动,随时欢迎骚扰\n");
             // 等待服务端监听端口关闭
             f.channel().closeFuture().sync();

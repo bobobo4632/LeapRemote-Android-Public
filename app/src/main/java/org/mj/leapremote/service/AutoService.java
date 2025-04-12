@@ -27,10 +27,9 @@ import android.widget.Button;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.ui.fragments.QuickConnectFragment;
 import org.mj.leapremote.R;
-import org.mj.leapremote.util.Utils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -61,7 +60,7 @@ public class AutoService extends AccessibilityService {
                     , PendingIntent.FLAG_IMMUTABLE);
         } else {
             contentIntent = PendingIntent.getActivity(this, 1012, clickIntent
-                    , PendingIntent.FLAG_ONE_SHOT);
+                    , PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         }
         //创建一个通知消息的构造器
         Notification.Builder builder = new Notification.Builder(this);
@@ -187,15 +186,15 @@ public class AutoService extends AccessibilityService {
                 lastStartTime = 0;
                 startTime = (indexTime = System.currentTimeMillis());
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("x", e.getX() / Define.displayMetrics.widthPixels);
-                jsonObject.put("y", e.getY() / Define.displayMetrics.heightPixels);
+                jsonObject.put("x", e.getX() / Const.displayMetrics.widthPixels);
+                jsonObject.put("y", e.getY() / Const.displayMetrics.heightPixels);
                 points.add(jsonObject);
                 return true;
             }
             long now = System.currentTimeMillis();
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("x", e.getX() / Define.displayMetrics.widthPixels);
-            jsonObject.put("y", e.getY() / Define.displayMetrics.heightPixels);
+            jsonObject.put("x", e.getX() / Const.displayMetrics.widthPixels);
+            jsonObject.put("y", e.getY() / Const.displayMetrics.heightPixels);
             jsonObject.put("duration", now - indexTime);
             points.add(jsonObject);
             indexTime = now;
@@ -338,8 +337,8 @@ public class AutoService extends AccessibilityService {
 
     public void performGesture(JSONArray points) {
         System.out.println("performGesture:"+points);
-        int width = Define.displayMetrics.widthPixels;
-        int height = Define.displayMetrics.heightPixels;
+        int width = Const.displayMetrics.widthPixels;
+        int height = Const.displayMetrics.heightPixels;
         GestureDescription.Builder gestureBuilder = new GestureDescription.Builder();
         if(points.size()==2) {
             Path path = new Path();

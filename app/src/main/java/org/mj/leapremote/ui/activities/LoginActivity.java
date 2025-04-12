@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.model.User;
 import org.mj.leapremote.service.HttpService;
@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         checkbox = findViewById(R.id.checkBox);
         errorMessage = findViewById(R.id.errnoMessage);
         loginButton = findViewById(R.id.loginButton);
-        if(!Define.autoLogin)
+        if(!Const.autoLogin)
             checkbox.setChecked(false);
         loginButton.setOnClickListener(v -> login());
         registerButton = findViewById(R.id.registerButton);
@@ -55,10 +55,10 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
             startActivity(intent);
         });
-        if(!Utils.stringIsEmpty(Define.autoLoginUsername))
-            usernameText.setText(Define.autoLoginUsername);
-        if(!Utils.stringIsEmpty(Define.autoLoginUsername) && Define.autoLogin)
-            passwordText.setText(Define.autoLoginPassword);
+        if(!Utils.stringIsEmpty(Const.autoLoginUsername))
+            usernameText.setText(Const.autoLoginUsername);
+        if(!Utils.stringIsEmpty(Const.autoLoginUsername) && Const.autoLogin)
+            passwordText.setText(Const.autoLoginPassword);
     }
 
     public void login() {
@@ -77,8 +77,8 @@ public class LoginActivity extends AppCompatActivity {
                     else if (Utils.stringIsEmpty(user.getUsername()))
                         LoginActivity.this.runOnUiThread(() -> showErrorMessage(getString(user.getUserId() == 1?R.string.usernameOrPasswordWrongInFormat:R.string.usernameOrPasswordWrong)));
                     else {
-                        Define.user = user;
-                        Define.autoLogin = checkbox.isChecked();
+                        Const.user = user;
+                        Const.autoLogin = checkbox.isChecked();
                         new Thread(DataUtil::save).start();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);

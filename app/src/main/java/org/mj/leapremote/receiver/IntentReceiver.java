@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.Toast;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.ui.activities.MainActivity;
 
 import static org.mj.leapremote.util.ServerUtil.refreshWebSocketIpv4AndIpv6;
@@ -25,7 +24,7 @@ public class IntentReceiver extends BroadcastReceiver {
                 if(MainActivity.INSTANCE!=null) {
                     new Thread(() -> {
                         try {
-                            Thread.sleep(Define.networkAvailableWaitTime);
+                            Thread.sleep(Const.networkAvailableWaitTime);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

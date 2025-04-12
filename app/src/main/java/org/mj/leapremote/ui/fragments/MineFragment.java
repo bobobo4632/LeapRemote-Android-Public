@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -22,7 +21,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.alibaba.fastjson.JSONObject;
 import com.leon.lib.settingview.LSettingItem;
 import com.mask.mediaprojection.utils.MediaProjectionHelper;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 
 import org.mj.leapremote.service.AutoService;
@@ -51,7 +50,7 @@ public class MineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_mine, container, false);
-        ((TextView) view.findViewById(R.id.versionText)).setText(getString(R.string.versionText) + Define.version);
+        ((TextView) view.findViewById(R.id.versionText)).setText(getString(R.string.versionText) + Const.version);
         enablePlainRemoteSwift = view.findViewById(R.id.enable_plain_remote_swift);
         enableDirectRemoteSwift = view.findViewById(R.id.enable_direct_remote_swift);
         gestures = view.findViewById(R.id.record_gesture);
@@ -64,9 +63,9 @@ public class MineFragment extends Fragment {
     }
 
     private void initData() {
-        if (Define.remotePlainEnabled)
+        if (Const.remotePlainEnabled)
             enablePlainRemoteSwift.clickOn();
-        if (Define.remoteDirectEnabled)
+        if (Const.remoteDirectEnabled)
             enableDirectRemoteSwift.clickOn();
     }
 
@@ -148,26 +147,26 @@ public class MineFragment extends Fragment {
     private void onEnablePlainRemoteClick() {
         if(isClickedOn(enablePlainRemoteSwift)) {
             clickOn(enablePlainRemoteSwift);
-            if (!Define.remotePlainEnabled) {
+            if (!Const.remotePlainEnabled) {
                 if (!Utils.isAccessibilitySettingsOn(getActivity())) {
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     Toast.makeText(getActivity(), getString(R.string.enable_the_function), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Define.serverDirect = false;
-                if(!Define.remoteDirectEnabled) {
+                Const.serverDirect = false;
+                if(!Const.remoteDirectEnabled) {
                     MediaProjectionHelper.getInstance().startService(getActivity());
                     return;
                 }
-                Define.remotePlainEnabled = true;
+                Const.remotePlainEnabled = true;
                 clickOn(enablePlainRemoteSwift);
                 ClientHelper.enableRemote(getActivity().getApplicationContext());
             }
         } else {
-            if(!Define.remoteDirectEnabled) {
+            if(!Const.remoteDirectEnabled) {
                 doNormalStop();
             }
-            Define.remotePlainEnabled = false;
+            Const.remotePlainEnabled = false;
             ClientHelper.disableRemote(getActivity());
         }
     }
@@ -175,14 +174,14 @@ public class MineFragment extends Fragment {
     private void onEnableDirectRemoteClick() {
         if(isClickedOn(enableDirectRemoteSwift)) {
             clickOn(enableDirectRemoteSwift);
-            if (!Define.remoteDirectEnabled) {
+            if (!Const.remoteDirectEnabled) {
                 if (!Utils.isAccessibilitySettingsOn(getActivity())) {
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     Toast.makeText(getActivity(), getString(R.string.enable_the_function), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Define.serverDirect = true;
-                if(!Define.remotePlainEnabled) {
+                Const.serverDirect = true;
+                if(!Const.remotePlainEnabled) {
                     MediaProjectionHelper.getInstance().startService(getActivity());
                     return;
                 }
@@ -193,15 +192,15 @@ public class MineFragment extends Fragment {
                 } else {
                     getActivity().getApplication().startService(intent);
                 }
-                Define.remoteDirectEnabled = true;
+                Const.remoteDirectEnabled = true;
                 clickOn(enableDirectRemoteSwift);
                 ClientHelper.enabled(getActivity());
             }
         } else {
-            if(!Define.remotePlainEnabled) {
+            if(!Const.remotePlainEnabled) {
                 doNormalStop();
             }
-            Define.remoteDirectEnabled = false;
+            Const.remoteDirectEnabled = false;
             ServerService.mService.stop();
             ClientHelper.enabled(getActivity());
         }

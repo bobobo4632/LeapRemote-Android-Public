@@ -2,7 +2,7 @@ package org.mj.leapremote.cs;
 
 import android.app.Activity;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.util.Utils;
 
 import java.net.URI;
@@ -19,12 +19,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker13;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
-import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.util.concurrent.GenericFutureListener;
 
 public class NettyClientWebSocket extends Thread {
@@ -73,7 +69,7 @@ public class NettyClientWebSocket extends Thread {
             bootstrap.group(client);
             bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
             bootstrap.option(ChannelOption.TCP_NODELAY, true);
-            bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Define.connectTimeout);
+            bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Const.connectTimeout);
             bootstrap.channel(NioSocketChannel.class);
             final WebSocketClientHandler[] handler = {new WebSocketClientHandler(NettyClientWebSocket.this)};
             bootstrap.handler(new ChannelInitializer<SocketChannel>() {
@@ -96,8 +92,10 @@ public class NettyClientWebSocket extends Thread {
                     //进行握手
                     Channel channel = channelFuture.channel();
                     handler[0] = (WebSocketClientHandler)channel.pipeline().get("handler");
+                    System.out.println("WTF"+(Const.ipv6Support));
+                    System.out.println("WTF"+( Const.ipv6Support?uri.getHost():(Utils.stringIsEmpty(Const.host)?uri.getHost(): Const.host)));
                     WebSocketClientHandshaker handshaker =
-                            new MyHandshaker(uri, new DefaultHttpHeaders(), 2155380*10, "192.168.2.16:2086");
+                            new MyHandshaker(uri, new DefaultHttpHeaders(), 2155380*10, Const.ipv6Support?uri.getHost():(Utils.stringIsEmpty(Const.host)?uri.getHost(): Const.host));
                     handler[0].setHandshaker(handshaker);
                     handshaker.handshake(channel);
                     // 阻塞等待是否握手成功?
@@ -120,14 +118,14 @@ public class NettyClientWebSocket extends Thread {
         boolean reconnect = false;
         while (!connected && !interrupt) {
             long start = System.currentTimeMillis();
-            System.out.println(Define.url);
-            connected = connect(Define.url+Define.deviceId);
+            System.out.println(Const.wsServer);
+            connected = connect(Const.wsServer + Const.deviceId);
             System.out.println(getName()+connected+interrupt);
             if(!connected) {
                 long time = System.currentTimeMillis() - start;
-                if(time<Define.connectTimeout) {
+                if(time< Const.connectTimeout) {
                     try {
-                        Thread.sleep(Define.connectTimeout-time);
+                        Thread.sleep(Const.connectTimeout-time);
                     } catch (InterruptedException e) {
                         connectSuccessCallback.failed(true, e.toString(), ++i);
                         return;

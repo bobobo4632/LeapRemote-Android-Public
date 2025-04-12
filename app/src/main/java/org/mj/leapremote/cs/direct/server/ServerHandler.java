@@ -9,11 +9,10 @@ import androidx.annotation.RequiresApi;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.service.AutoService;
 import org.mj.leapremote.service.ServerService;
 import org.mj.leapremote.ui.activities.MainActivity;
-import org.mj.leapremote.util.ClientHelper;
 import org.mj.leapremote.util.KeyUtil;
 
 import io.netty.buffer.Unpooled;
@@ -87,7 +86,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                     startRecord();
                     JSONObject savedGestures = new JSONObject();
                     savedGestures.put("type", "savedGestures");
-                    savedGestures.put("savedGestures", Define.savedGestures);
+                    savedGestures.put("savedGestures", Const.savedGestures);
                     send(ctx, savedGestures.toString());
                 }
                 break;
@@ -167,8 +166,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                 }
                 break;
             case "quality":
-                Define.scale = (float)jsonObject.getInteger("scale")/10f;
-                Define.quality = jsonObject.getInteger("quality");
+                Const.scale = (float)jsonObject.getInteger("scale")/10f;
+                Const.quality = jsonObject.getInteger("quality");
                 break;
         }
     }

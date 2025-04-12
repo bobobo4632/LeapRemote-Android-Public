@@ -16,7 +16,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lxj.xpopup.XPopup;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.service.AutoService;
 import org.mj.leapremote.util.DataUtil;
@@ -53,9 +53,9 @@ public class GesturesActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("name", name);
                             jsonObject.put("gesture", gesture);
-                            JSONArray jsonArray = JSONArray.parseArray(Define.savedGestures);
+                            JSONArray jsonArray = JSONArray.parseArray(Const.savedGestures);
                             jsonArray.add(jsonObject);
-                            Define.savedGestures = jsonArray.toString();
+                            Const.savedGestures = jsonArray.toString();
                             runOnUiThread(this::initData);
                             new Thread(DataUtil::save).start();
                         }).show();
@@ -64,7 +64,7 @@ public class GesturesActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        data = JSONArray.parseArray(Define.savedGestures);
+        data = JSONArray.parseArray(Const.savedGestures);
         gestureAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -91,18 +91,17 @@ public class GesturesActivity extends AppCompatActivity {
                         JSONObject gesture = data.getJSONObject(position);
                         PopupMenu popupMenu = new PopupMenu(GesturesActivity.this, v);
                         popupMenu.setOnMenuItemClickListener(item -> {
-                            switch (item.getItemId()){
-                                case R.id.item_execute:
-                                    AutoService.mService.performMultipleGestures(gesture.getJSONArray("gesture"));
-                                    return true;
-                                case R.id.item_remove:
-                                    data.remove(position);
-                                    Define.savedGestures = data.toString();
-                                    initData();
-                                    new Thread(DataUtil::save).start();
-                                    return true;
-                                default:
-                                    return false;
+                            if(item.getItemId()==R.id.item_execute) {
+                                AutoService.mService.performMultipleGestures(gesture.getJSONArray("gesture"));
+                                return true;
+                            } else if (item.getItemId()==R.id.item_remove) {
+                                data.remove(position);
+                                Const.savedGestures = data.toString();
+                                initData();
+                                new Thread(DataUtil::save).start();
+                                return true;
+                            } else {
+                                return false;
                             }
                         });
                         popupMenu.getMenuInflater().inflate(R.menu.menu_gesture_actions, popupMenu.getMenu());

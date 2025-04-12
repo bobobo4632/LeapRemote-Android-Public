@@ -13,9 +13,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lxj.xpopup.XPopup;
-import com.mask.mediaprojection.service.MediaProjectionService;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.coder.ScreenDecoder;
 import org.mj.leapremote.cs.direct.NettyClientDirect;
@@ -83,7 +82,7 @@ public class ClientHandler {
     public void sendBasicData() {
         JSONObject object = new JSONObject();
         object.put("type", "basicData");
-        object.put("version", Define.version);
+        object.put("version", Const.version);
         object.put("ip", HttpService.getPublicIp());
         JSONObject deviceInfo = new JSONObject();
         deviceInfo.put("device", Build.DEVICE);
@@ -91,15 +90,15 @@ public class ClientHandler {
         deviceInfo.put("abi", JSONArray.toJSONString(Build.SUPPORTED_ABIS));
         deviceInfo.put("model", Build.MODEL);
         deviceInfo.put("brand", Build.BRAND);
-        deviceInfo.put("width", Define.displayMetrics.widthPixels);
-        deviceInfo.put("height", Define.displayMetrics.heightPixels);
-        deviceInfo.put("dpi", Define.displayMetrics.densityDpi);
+        deviceInfo.put("width", Const.displayMetrics.widthPixels);
+        deviceInfo.put("height", Const.displayMetrics.heightPixels);
+        deviceInfo.put("dpi", Const.displayMetrics.densityDpi);
         object.put("deviceInfo", deviceInfo);
         sendMessage(object.toJSONString());
         object = new JSONObject();
         object.put("type", "remote");
-        object.put("enabled", Define.remotePlainEnabled);
-        object.put("directEnabled", Define.remoteDirectEnabled);
+        object.put("enabled", Const.remotePlainEnabled);
+        object.put("directEnabled", Const.remoteDirectEnabled);
         sendMessage(object.toJSONString());
         object = new JSONObject();
         object.put("type", "devices");
@@ -113,7 +112,7 @@ public class ClientHandler {
         JSONObject msg = JSON.parseObject(message);
         switch (msg.getString("type")) {
             case "devices":
-                Define.plainDevices.clear();
+                Const.plainDevices.clear();
                 JSONArray devices = msg.getJSONArray("devices");
                 for(int i=0;i<devices.size();i++) {
                     DevicesUtil.insertOrUpdate(devices.getJSONObject(i));
@@ -122,25 +121,25 @@ public class ClientHandler {
                     MainActivity.INSTANCE.mainFragment.refreshDevices();
                 break;
             case "connectIdAndPin":
-                Define.connectId = msg.getString("connectId");
-                Define.connectPin = msg.getString("connectPin");
+                Const.connectId = msg.getString("connectId");
+                Const.connectPin = msg.getString("connectPin");
                 if(MainActivity.INSTANCE!=null && MainActivity.INSTANCE.actsFragment!=null) {
                     MainActivity.INSTANCE.runOnUiThread(() -> MainActivity.INSTANCE.actsFragment.updateConnectIdAndPin());
                 }
                 break;
             case "control":
-                Define.controlled = msg.getBoolean("controlled");
-                Define.controlId = msg.getInteger("controlId");
+                Const.controlled = msg.getBoolean("controlled");
+                Const.controlId = msg.getInteger("controlId");
                 //System.out.println("123123123123123123123"+msg.getBoolean("controlled"));
                 System.out.println("PRE SHOULD OPEN ACTIVITY!!!"+msg);
                 if(msg.getBoolean("controlled")) {
                     ClientHelper.enableSend(activity.getApplicationContext());
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("type", "savedGestures");
-                    jsonObject.put("savedGestures", Define.savedGestures);
+                    jsonObject.put("savedGestures", Const.savedGestures);
                     JSONObject send = new JSONObject();
                     send.put("type", "send");
-                    send.put("controlId", Define.controlId);
+                    send.put("controlId", Const.controlId);
                     send.put("controlled", true);
                     send.put("data", jsonObject);
                     ClientHelper.sendMessage(activity.getApplicationContext(), send.toString());
@@ -199,9 +198,9 @@ public class ClientHandler {
                 }
                 break;
             case "savedGestures":
-                Define.controlSavedGestures = msg.getString("savedGestures");
+                Const.controlSavedGestures = msg.getString("savedGestures");
                 if(ControlActivity.INSTANCE!=null) {
-                    ControlActivity.INSTANCE.setGestures(Define.controlSavedGestures);
+                    ControlActivity.INSTANCE.setGestures(Const.controlSavedGestures);
                 }
                 break;
             case "record":
@@ -317,8 +316,8 @@ public class ClientHandler {
                 }
                 break;
             case "quality":
-                Define.scale = (float)msg.getInteger("scale")/10f;
-                Define.quality = msg.getInteger("quality");
+                Const.scale = (float)msg.getInteger("scale")/10f;
+                Const.quality = msg.getInteger("quality");
                 break;
             case "controlFailed":
                 System.out.println("failed");
@@ -326,8 +325,8 @@ public class ClientHandler {
                 break;
             case "controlRemoved":
                 System.out.println("RECEIVED SUCCESS");
-                Define.controlled = false;
-                Define.controlId = 0;
+                Const.controlled = false;
+                Const.controlId = 0;
                 if(msg.getBoolean("controlled")) {
                     ClientHelper.disableSend(activity.getApplicationContext());
                     return;
@@ -338,11 +337,11 @@ public class ClientHandler {
                 break;
             case "controlForward":
                 if(MainActivity.INSTANCE!=null) {
-                    if (!Define.ipv6Support) {
+                    if (!Const.ipv6Support) {
                         JSONObject request = new JSONObject();
                         request.put("type", "connect");
-                        request.put("connectId", Define.temporaryId);
-                        request.put("connectPin", Define.temporaryPin);
+                        request.put("connectId", Const.temporaryId);
+                        request.put("connectPin", Const.temporaryPin);
                         request.put("forward", true);
                         ClientHelper.sendMessage(MainActivity.INSTANCE.getApplicationContext(), request.toJSONString());
                         return;
@@ -365,11 +364,11 @@ public class ClientHandler {
                             if(NettyClientDirect.INSTANCE !=null) {
                                 NettyClientDirect.INSTANCE.interrupt();
                             }
-                            new NettyClientDirect(MainActivity.INSTANCE, jsonArray.getJSONObject(position).getString("ip"), Define.defaultPort
+                            new NettyClientDirect(MainActivity.INSTANCE, jsonArray.getJSONObject(position).getString("ip"), Const.defaultPort
                                     , new NettyClientDirect.OnConnectSuccessCallback() {
                                 @Override
                                 public void success() {
-                                    Define.direct = true;
+                                    Const.direct = true;
                                     MainActivity.INSTANCE.startActivity(new Intent(MainActivity.INSTANCE, ControlActivity.class));
                                 }
                                 @Override
@@ -382,17 +381,17 @@ public class ClientHandler {
                     }, () -> {
                         JSONObject request = new JSONObject();
                         request.put("type", "connect");
-                        request.put("connectId", Define.temporaryId);
-                        request.put("connectPin", Define.temporaryPin);
+                        request.put("connectId", Const.temporaryId);
+                        request.put("connectPin", Const.temporaryPin);
                         request.put("forward", true);
                         ClientHelper.sendMessage(MainActivity.INSTANCE.getApplicationContext(), request.toJSONString());
                     }).show();
                 }
                 break;
             case "speedLimit":
-                Define.speedLimited = msg.getBoolean("speedLimited");
-                Define.maxSpeed = msg.getFloatValue("maxSpeed");
-                System.out.println("SpeedLimit: "+Define.speedLimited+", MaxSpeed: "+Define.maxSpeed);
+                Const.speedLimited = msg.getBoolean("speedLimited");
+                Const.maxSpeed = msg.getFloatValue("maxSpeed");
+                System.out.println("SpeedLimit: "+ Const.speedLimited+", MaxSpeed: "+ Const.maxSpeed);
                 break;
         }
     }

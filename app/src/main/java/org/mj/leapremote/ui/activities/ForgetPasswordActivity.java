@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.service.HttpService;
 import org.mj.leapremote.util.DataUtil;
@@ -35,8 +35,8 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forget_password);
         ((Toolbar)findViewById(R.id.id_toolbar)).setNavigationOnClickListener(v -> finish());
         reg_username = findViewById(R.id.reg_username);
-        if(Define.user!=null)
-            reg_username.setText(Define.user.getUsername());
+        if(Const.user!=null)
+            reg_username.setText(Const.user.getUsername());
         reg_password = findViewById(R.id.reg_password);
         reg_password2 = findViewById(R.id.reg_password2);
         reg_code = findViewById(R.id.reg_code);
@@ -63,8 +63,8 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                                 int errno = HttpService.forgetPassword(map);
                                 switch (errno) {
                                     case 0:
-                                        if(Define.user!=null) {
-                                            Define.user.setPassword(password);
+                                        if(Const.user!=null) {
+                                            Const.user.setPassword(password);
                                             new Thread(DataUtil::save).start();
                                         }
                                         runOnUiThread(() -> new AlertDialog.Builder(this)

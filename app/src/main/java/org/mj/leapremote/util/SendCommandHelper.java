@@ -2,14 +2,11 @@ package org.mj.leapremote.util;
 
 import android.content.Context;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.cs.direct.NettyClientDirect;
-
-import java.util.List;
 
 public class SendCommandHelper {
     private Context context;
@@ -20,7 +17,7 @@ public class SendCommandHelper {
         //System.out.println(points);
         //points = Utils.simplifyPoints(points);
         //System.out.println(points);
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -35,13 +32,13 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }
 
     public void doSendGestures(JSONArray gestures) {
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -56,13 +53,13 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }
 
     public void doSendKey(String key) {
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -77,13 +74,13 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }
 
     public void doSendButton(int button) {
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -98,13 +95,13 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }
 
     public void doSendQuality(int progress, int quality) {
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -121,13 +118,13 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }
 
     public void doSendRestartMedia() {
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -144,13 +141,13 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }
 
     public void doSendResolution(int progress) {
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -168,13 +165,13 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }
 
     public void doSendFirstReceived() {
-        if(Define.direct) {
+        if(Const.direct) {
             if (NettyClientDirect.INSTANCE == null)
                 return;
             JSONObject jsonObject = new JSONObject();
@@ -187,7 +184,7 @@ public class SendCommandHelper {
         JSONObject request = new JSONObject();
         request.put("type", "send");
         request.put("controlled", false);
-        request.put("controlId", Define.controlId);
+        request.put("controlId", Const.controlId);
         request.put("data", jsonObject);
         ClientHelper.sendMessage(context, request.toJSONString());
     }

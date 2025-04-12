@@ -5,7 +5,7 @@ import android.content.Context;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.model.Device;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class DevicesUtil {
     }
 
     public static List<String> getDeviceIdsFromDevices() {
-        return getDeviceIdsFromDevices(Define.plainDevices);
+        return getDeviceIdsFromDevices(Const.plainDevices);
     }
 
     public static List<String> getDeviceIdsFromDevices(List<Device> devices) {
@@ -45,7 +45,7 @@ public class DevicesUtil {
     }
 
     public static Device getDeviceFromDevices(String deviceId) {
-        return getDeviceFromDevices(deviceId, Define.plainDevices);
+        return getDeviceFromDevices(deviceId, Const.plainDevices);
     }
 
 
@@ -60,7 +60,7 @@ public class DevicesUtil {
     }
 
     public static int getIndexFromDevices(String deviceId) {
-        return getIndexFromDevices(deviceId, Define.plainDevices);
+        return getIndexFromDevices(deviceId, Const.plainDevices);
     }
 
 
@@ -76,7 +76,7 @@ public class DevicesUtil {
 
     public static JSONArray getPlainDevicesAsJSONArray() {
         JSONArray result = new JSONArray();
-        for(Device device : Define.plainDevices) {
+        for(Device device : Const.plainDevices) {
             if(device.getMode()==Device.MODE_PLAIN) {
                 JSONObject object = new JSONObject();
                 object.put("deviceId", device.getDeviceId());
@@ -103,11 +103,11 @@ public class DevicesUtil {
             return;
         int index = getIndexFromDevices(device.getDeviceId());
         if(index==-1) {
-            Define.plainDevices.add(device);
+            Const.plainDevices.add(device);
             return;
         }
-        Define.plainDevices.remove(index);
-        Define.plainDevices.add(device);
+        Const.plainDevices.remove(index);
+        Const.plainDevices.add(device);
     }
 
     /*public static synchronized void update(JSONObject json) {
@@ -144,7 +144,7 @@ public class DevicesUtil {
 
     public static String getDirectDevicesJSONString() {
         JSONArray jsonArray = new JSONArray();
-        for(Device device : Define.directDevices) {
+        for(Device device : Const.directDevices) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", device.getName());
             jsonObject.put("host", device.getIp());
@@ -167,7 +167,7 @@ public class DevicesUtil {
                 device.setPort(jsonObject.getInteger("port"));
                 device.setName(jsonObject.getString("name"));
                 device.setStatus(Device.STATUS_NOT_SUPPORTED);
-                Define.directDevices.add(device);
+                Const.directDevices.add(device);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -24,7 +24,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.lxj.xpopup.XPopup;
 
 import org.jetbrains.annotations.NotNull;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.cs.direct.NettyClientDirect;
 import org.mj.leapremote.model.Device;
@@ -102,7 +102,7 @@ public class MainFragment extends Fragment {
     public List<Device> data1;
     public List<Device> data2;
     private void initDataPlain() {
-        data1 = new ArrayList<>(Arrays.asList(Define.plainDevices.toArray(new Device[]{})));
+        data1 = new ArrayList<>(Arrays.asList(Const.plainDevices.toArray(new Device[]{})));
 
         manualDeviceAdapter = new BaseAdapter() {
             @Override
@@ -133,59 +133,59 @@ public class MainFragment extends Fragment {
                         Device device = data1.get(position);
                         PopupMenu popupMenu = new PopupMenu(getActivity(), v);
                         popupMenu.setOnMenuItemClickListener(item -> {
-                            switch (item.getItemId()){
-                                case R.id.item_control:
-                                    switch (device.getStatus()) {
-                                        case Device.STATUS_ONLINE:
-                                        case Device.STATUS_DIRECT:
-                                            JSONObject request = new JSONObject();
-                                            request.put("type", "connect");
-                                            request.put("connectId", device.getConnectId());
-                                            request.put("connectPin", device.getConnectPin());
-                                            Define.temporaryId = request.getString("connectId");
-                                            Define.temporaryPin = request.getString("connectPin");
-                                            ClientHelper.sendMessage(getActivity().getApplicationContext(), request.toJSONString());
-                                            Define.direct = false;
-                                            break;
-                                        case Device.STATUS_OFFLINE:
-                                            Toast.makeText(getActivity(), "此设备离线", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        case Device.STATUS_NOT_ENABLED:
-                                            Toast.makeText(getActivity(), "此设备未启用远程控制", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        default:
-                                            Toast.makeText(getActivity(), "此设备状态码错误: "+device.getStatusString(getResources()), Toast.LENGTH_SHORT).show();
-                                    }
-                                    return true;
-                                case R.id.item_edit:
-                                    new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.edit),
-                                            "当前连接id："+device.getConnectId()+"\n"+"请输入连接密码",
-                                            device.getConnectPin(),
-                                            "请输入连接密码",
-                                            pin -> new Thread(() -> {
-                                                Device d = HttpService.getDevice(device.getConnectId(), pin);
-                                                if(d==null) {
-                                                    getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.cannot_connect_to_server, Toast.LENGTH_SHORT).show());
-                                                    return;
-                                                }
-                                                if(d.getDeviceId()==null) {
-                                                    getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.no_such_device, Toast.LENGTH_SHORT).show());
-                                                    return;
-                                                }
-                                                Define.plainDevices.add(d);
-                                                DevicesUtil.updateDevicesWithLocal(getActivity());
-                                            }).start())
-                                            .show();
-                                    return true;
-                                case R.id.item_remove:
-                                    JSONObject request = new JSONObject();
-                                    request.put("type", "deviceRemove");
-                                    request.put("deviceId", device.getDeviceId());
-                                    ClientHelper.sendMessage(getActivity().getApplicationContext(), request.toJSONString());
-                                    return true;
-                                default:
-                                    return false;
+                            if(item.getItemId()== R.id.item_control) {
+                                switch (device.getStatus()) {
+                                    case Device.STATUS_ONLINE:
+                                    case Device.STATUS_DIRECT:
+                                        JSONObject request = new JSONObject();
+                                        request.put("type", "connect");
+                                        request.put("connectId", device.getConnectId());
+                                        request.put("connectPin", device.getConnectPin());
+                                        Const.temporaryId = request.getString("connectId");
+                                        Const.temporaryPin = request.getString("connectPin");
+                                        ClientHelper.sendMessage(getActivity().getApplicationContext(), request.toJSONString());
+                                        Const.direct = false;
+                                        break;
+                                    case Device.STATUS_OFFLINE:
+                                        Toast.makeText(getActivity(), "此设备离线", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case Device.STATUS_NOT_ENABLED:
+                                        Toast.makeText(getActivity(), "此设备未启用远程控制", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    default:
+                                        Toast.makeText(getActivity(), "此设备状态码错误: " + device.getStatusString(getResources()), Toast.LENGTH_SHORT).show();
+                                }
+                                return true;
                             }
+                            if(item.getItemId()==R.id.item_edit) {
+                                new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.edit),
+                                                "当前连接id：" + device.getConnectId() + "\n" + "请输入连接密码",
+                                                device.getConnectPin(),
+                                                "请输入连接密码",
+                                                pin -> new Thread(() -> {
+                                                    Device d = HttpService.getDevice(device.getConnectId(), pin);
+                                                    if (d == null) {
+                                                        getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.cannot_connect_to_server, Toast.LENGTH_SHORT).show());
+                                                        return;
+                                                    }
+                                                    if (d.getDeviceId() == null) {
+                                                        getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.no_such_device, Toast.LENGTH_SHORT).show());
+                                                        return;
+                                                    }
+                                                    Const.plainDevices.add(d);
+                                                    DevicesUtil.updateDevicesWithLocal(getActivity());
+                                                }).start())
+                                        .show();
+                                return true;
+                            }
+                            if(item.getItemId()==R.id.item_remove) {
+                                JSONObject request = new JSONObject();
+                                request.put("type", "deviceRemove");
+                                request.put("deviceId", device.getDeviceId());
+                                ClientHelper.sendMessage(getActivity().getApplicationContext(), request.toJSONString());
+                                return true;
+                            }
+                            return false;
                         });
                         popupMenu.getMenuInflater().inflate(R.menu.menu_device_actions, popupMenu.getMenu());
                         popupMenu.show();
@@ -199,7 +199,7 @@ public class MainFragment extends Fragment {
     }
 
     public void initDataDirect() {
-        data2 = new ArrayList<>(Arrays.asList(Define.directDevices.toArray(new Device[]{})));
+        data2 = new ArrayList<>(Arrays.asList(Const.directDevices.toArray(new Device[]{})));
         directDeviceAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -229,66 +229,67 @@ public class MainFragment extends Fragment {
                         Device device = data2.get(position);
                         PopupMenu popupMenu = new PopupMenu(getActivity(), v);
                         popupMenu.setOnMenuItemClickListener(item -> {
-                            switch (item.getItemId()){
-                                case R.id.item_control:
-                                    if(NettyClientDirect.INSTANCE !=null) {
-                                        NettyClientDirect.INSTANCE.interrupt();
+                            if(item.getItemId()==R.id.item_control) {
+                                if (NettyClientDirect.INSTANCE != null) {
+                                    NettyClientDirect.INSTANCE.interrupt();
+                                }
+                                new NettyClientDirect(getActivity(), device.getIp(), device.getPort()
+                                        , new NettyClientDirect.OnConnectSuccessCallback() {
+                                    @Override
+                                    public void success() {
+                                        Const.direct = true;
+                                        startActivity(new Intent(getActivity(), ControlActivity.class));
                                     }
-                                    new NettyClientDirect(getActivity(), device.getIp(), device.getPort()
-                                            , new NettyClientDirect.OnConnectSuccessCallback() {
-                                        @Override
-                                        public void success() {
-                                            Define.direct = true;
-                                            startActivity(new Intent(getActivity(), ControlActivity.class));
-                                        }
-                                        @Override
-                                        public void failed(String err) {
-                                            System.err.println(err);
-                                            getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.failed_to_connect, Toast.LENGTH_SHORT).show());
-                                        }
-                                    }).start();
-                                    return true;
-                                case R.id.item_edit:
-                                    new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.edit),
-                                            "请输入主机",
-                                            device.getIp(),
-                                            "请输入主机",
-                                            host -> {
-                                                if(Utils.stringIsEmpty(host)) {
-                                                    new XPopup.Builder(getActivity()).asConfirm("失败", "主机不能为空", null).show();
-                                                    return;
-                                                }
+
+                                    @Override
+                                    public void failed(String err) {
+                                        System.err.println(err);
+                                        getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.failed_to_connect, Toast.LENGTH_SHORT).show());
+                                    }
+                                }).start();
+                                return true;
+                            }
+                            if(item.getItemId()==R.id.item_edit) {
+                                new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.edit),
+                                        "请输入主机",
+                                        device.getIp(),
+                                        "请输入主机",
+                                        host -> {
+                                            if (Utils.stringIsEmpty(host)) {
+                                                new XPopup.Builder(getActivity()).asConfirm("失败", "主机不能为空", null).show();
+                                                return;
+                                            }
                                     /*new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.direct_mode), "请输入端口",
                                             port -> {*/
-                                                String port = String.valueOf(Define.defaultPort);
-                                                if(Utils.stringIsEmpty(port)) {
-                                                    new XPopup.Builder(getActivity()).asConfirm("失败", "端口不能为空", null).show();
-                                                    return;
-                                                }
-                                                if(!Utils.checkPort(port)) {
-                                                    new XPopup.Builder(getActivity()).asConfirm("失败", "端口只能为1~65535", null).show();
-                                                    return;
-                                                }
-                                                Device d = new Device();
-                                                d.setName(host);
-                                                d.setStatus(Device.STATUS_NOT_SUPPORTED);
-                                                d.setMode(Device.MODE_DIRECT);
-                                                d.setIp(host);
-                                                d.setPort(Integer.parseInt(port));
-                                                Define.directDevices.set(position, d);
-                                                DataUtil.save();
-                                                refreshDevices();
-                                                //}).show();
-                                            }).show();
-                                    return true;
-                                case R.id.item_remove:
-                                    Define.directDevices.remove(position);
-                                    DataUtil.save();
-                                    refreshDevices();
-                                    return true;
-                                default:
-                                    return false;
+                                            String port = String.valueOf(Const.defaultPort);
+                                            if (Utils.stringIsEmpty(port)) {
+                                                new XPopup.Builder(getActivity()).asConfirm("失败", "端口不能为空", null).show();
+                                                return;
+                                            }
+                                            if (!Utils.checkPort(port)) {
+                                                new XPopup.Builder(getActivity()).asConfirm("失败", "端口只能为1~65535", null).show();
+                                                return;
+                                            }
+                                            Device d = new Device();
+                                            d.setName(host);
+                                            d.setStatus(Device.STATUS_NOT_SUPPORTED);
+                                            d.setMode(Device.MODE_DIRECT);
+                                            d.setIp(host);
+                                            d.setPort(Integer.parseInt(port));
+                                            Const.directDevices.set(position, d);
+                                            DataUtil.save();
+                                            refreshDevices();
+                                            //}).show();
+                                        }).show();
+                                return true;
                             }
+                            if(item.getItemId()==R.id.item_remove) {
+                                Const.directDevices.remove(position);
+                                DataUtil.save();
+                                refreshDevices();
+                                return true;
+                            }
+                            return false;
                         });
                         popupMenu.getMenuInflater().inflate(R.menu.menu_device_actions, popupMenu.getMenu());
                         popupMenu.show();
@@ -303,8 +304,8 @@ public class MainFragment extends Fragment {
 
     public void refreshDevices() {
         getActivity().runOnUiThread(() -> {
-            data1 = new ArrayList<>(Arrays.asList(Define.plainDevices.toArray(new Device[]{})));
-            data2 = new ArrayList<>(Arrays.asList(Define.directDevices.toArray(new Device[]{})));
+            data1 = new ArrayList<>(Arrays.asList(Const.plainDevices.toArray(new Device[]{})));
+            data2 = new ArrayList<>(Arrays.asList(Const.directDevices.toArray(new Device[]{})));
             manualDeviceAdapter.notifyDataSetChanged();
             directDeviceAdapter.notifyDataSetChanged();
             refreshView();
@@ -328,70 +329,69 @@ public class MainFragment extends Fragment {
         addDeviceButton.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(getActivity(), v);
             popupMenu.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()){
-                    case R.id.manual_item:
-                        new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.plain_mode), getString(R.string.input_connect_id),
-                                id -> {
-                                    if(Utils.stringIsEmpty(id)) {
-                                        new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.id_cannot_be_empty), null).show();
-                                        return;
-                                    }
-                                    if(DevicesUtil.getDeviceFromDevices(id)!=null) {
-                                        new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.device_existed), null).show();
-                                        return;
-                                    }
-                                    new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.plain_mode), getString(R.string.input_connect_pin),
-                                            pin -> new Thread(() -> {
-                                                Device device = HttpService.getDevice(id, pin);
-                                                if(device==null) {
-                                                    getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.cannot_connect_to_server, Toast.LENGTH_SHORT).show());
-                                                    return;
-                                                }
-                                                if(device.getDeviceId()==null) {
-                                                    getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.no_such_device, Toast.LENGTH_SHORT).show());
-                                                    return;
-                                                }
-                                                Define.plainDevices.add(device);
-                                                getActivity().runOnUiThread(() -> tabLayout.selectTab(tabLayout.getTabAt(0)));
-                                                DevicesUtil.updateDevicesWithLocal(getActivity());
-                                            }).start())
-                                            .show();
-                                }).show();
-                        return true;
-                    case R.id.direct_item:
-                        new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.direct_mode), getString(R.string.input_host),
-                                host -> {
-                                    if(Utils.stringIsEmpty(host)) {
-                                        new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.host_cannot_be_empty), null).show();
-                                        return;
-                                    }
+                if(item.getItemId()==R.id.manual_item) {
+                    new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.plain_mode), getString(R.string.input_connect_id),
+                            id -> {
+                                if (Utils.stringIsEmpty(id)) {
+                                    new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.id_cannot_be_empty), null).show();
+                                    return;
+                                }
+                                if (DevicesUtil.getDeviceFromDevices(id) != null) {
+                                    new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.device_existed), null).show();
+                                    return;
+                                }
+                                new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.plain_mode), getString(R.string.input_connect_pin),
+                                                pin -> new Thread(() -> {
+                                                    Device device = HttpService.getDevice(id, pin);
+                                                    if (device == null) {
+                                                        getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.cannot_connect_to_server, Toast.LENGTH_SHORT).show());
+                                                        return;
+                                                    }
+                                                    if (device.getDeviceId() == null) {
+                                                        getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), R.string.no_such_device, Toast.LENGTH_SHORT).show());
+                                                        return;
+                                                    }
+                                                    Const.plainDevices.add(device);
+                                                    getActivity().runOnUiThread(() -> tabLayout.selectTab(tabLayout.getTabAt(0)));
+                                                    DevicesUtil.updateDevicesWithLocal(getActivity());
+                                                }).start())
+                                        .show();
+                            }).show();
+                    return true;
+                }
+                if(item.getItemId()==R.id.direct_item) {
+                    new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.direct_mode), getString(R.string.input_host),
+                            host -> {
+                                if (Utils.stringIsEmpty(host)) {
+                                    new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.host_cannot_be_empty), null).show();
+                                    return;
+                                }
                                     /*new XPopup.Builder(getActivity()).asInputConfirm(getString(R.string.direct_mode), "请输入端口",
                                             port -> {*/
-                                    String port = String.valueOf(Define.defaultPort);
-                                    if(Utils.stringIsEmpty(port)) {
-                                        new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.port_cannot_be_empty), null).show();
-                                        return;
-                                    }
-                                    if(!Utils.checkPort(port)) {
-                                        new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.port_range_limit), null).show();
-                                        return;
-                                    }
-                                    Device device = new Device();
-                                    device.setName(host);
-                                    device.setStatus(Device.STATUS_NOT_SUPPORTED);
-                                    device.setMode(Device.MODE_DIRECT);
-                                    device.setIp(host);
-                                    device.setPort(Integer.parseInt(port));
-                                    Define.directDevices.add(device);
-                                    DataUtil.save();
-                                    getActivity().runOnUiThread(() -> tabLayout.selectTab(tabLayout.getTabAt(1)));
-                                    refreshDevices();
-                                    //}).show();
-                                }).show();
-                        return true;
-                    default:
-                        return false;
+                                String port = String.valueOf(Const.defaultPort);
+                                if (Utils.stringIsEmpty(port)) {
+                                    new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.port_cannot_be_empty), null).show();
+                                    return;
+                                }
+                                if (!Utils.checkPort(port)) {
+                                    new XPopup.Builder(getActivity()).asConfirm(getString(R.string.failed), getString(R.string.port_range_limit), null).show();
+                                    return;
+                                }
+                                Device device = new Device();
+                                device.setName(host);
+                                device.setStatus(Device.STATUS_NOT_SUPPORTED);
+                                device.setMode(Device.MODE_DIRECT);
+                                device.setIp(host);
+                                device.setPort(Integer.parseInt(port));
+                                Const.directDevices.add(device);
+                                DataUtil.save();
+                                getActivity().runOnUiThread(() -> tabLayout.selectTab(tabLayout.getTabAt(1)));
+                                refreshDevices();
+                                //}).show();
+                            }).show();
+                    return true;
                 }
+                return false;
             });
             popupMenu.getMenuInflater().inflate(R.menu.menu_add_device, popupMenu.getMenu());
             popupMenu.show();

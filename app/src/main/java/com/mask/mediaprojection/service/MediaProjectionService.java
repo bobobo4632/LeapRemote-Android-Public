@@ -22,7 +22,9 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 
 import com.mask.mediaprojection.interfaces.MediaProjectionNotificationEngine;
@@ -207,6 +209,14 @@ public class MediaProjectionService extends Service {
                 isImageAvailable = true;
             }
         }, null);*/
+
+
+        mediaProjection.registerCallback(new MediaProjection.Callback() {
+            @Override
+            public void onStop() {
+                super.onStop();
+            }
+        }, new Handler(Looper.getMainLooper()));
 
         virtualDisplayImageReader = mediaProjection.createVirtualDisplay("ScreenCapture",
                 Math.max(width, height), Math.max(width, height), densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,

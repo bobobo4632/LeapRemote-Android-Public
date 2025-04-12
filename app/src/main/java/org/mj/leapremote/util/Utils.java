@@ -17,8 +17,10 @@ import androidx.core.app.ActivityCompat;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import org.mj.leapremote.BaseApplication;
 import org.mj.leapremote.R;
 import org.mj.leapremote.service.AutoService;
+import org.mj.leapremote.ui.activities.MainActivity;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -333,7 +335,7 @@ public class Utils {
 
     public static String getUniquePsuedoID() {
         String serial;
-        String m_szDevIDShort = Build.BOARD+Build.BRAND+Build.CPU_ABI+Build.DEVICE+Build.DISPLAY+Build.HOST+Build.ID+Build.MANUFACTURER+Build.MODEL+Build.PRODUCT+Build.TAGS+Build.TYPE+Build.USER + new Random().nextInt(90000)+10000;
+        String m_szDevIDShort = Build.BOARD+Build.BRAND+Build.CPU_ABI+Build.DEVICE+Build.DISPLAY+Build.HOST+Build.ID+Build.MANUFACTURER+Build.MODEL+Build.PRODUCT+Build.TAGS+Build.TYPE+Build.USER+new DeviceUtil(BaseApplication.getInstance()).getAndroidID();
         //13 位
         try { serial = android.os.Build.class.getField("SERIAL").get(null).toString();
             // API>=9 使用serial号

@@ -2,17 +2,12 @@ package org.mj.leapremote.ui.activities;
 
 import android.accessibilityservice.AccessibilityService;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -23,22 +18,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.coder.ScreenDecoder;
-import org.mj.leapremote.cs.ClientHandler;
 import org.mj.leapremote.cs.direct.NettyClientDirect;
-import org.mj.leapremote.service.AutoService;
 import org.mj.leapremote.util.ClientHelper;
-import org.mj.leapremote.util.DataUtil;
 import org.mj.leapremote.util.ImageUtils;
 import org.mj.leapremote.util.SendCommandHelper;
 import org.mj.leapremote.util.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.netty.util.internal.StringUtil;
 
 public class ControlActivity extends AppCompatActivity {
     public static ControlActivity INSTANCE;
@@ -130,8 +117,8 @@ public class ControlActivity extends AppCompatActivity {
         sendCommandHelper = new SendCommandHelper(getApplicationContext());
         sendCommandHelper.doSendResolution(50);
         setListeners();
-        if(!Utils.stringIsEmpty(Define.controlSavedGestures)) {
-            setGestures(Define.controlSavedGestures);
+        if(!Utils.stringIsEmpty(Const.controlSavedGestures)) {
+            setGestures(Const.controlSavedGestures);
         }
         //startService(new Intent(MainActivity.this, FloatingView.class));
     }
@@ -162,11 +149,16 @@ public class ControlActivity extends AppCompatActivity {
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                View view = findViewById(R.id.root);
+                view.setFitsSystemWindows(false);
+                view.setPadding(0, 0, 0, 0);
                 fullscreen = true;
                 fullscreenButton.setBackgroundResource(R.drawable.fullscreen_disable);
                 return;
             }
             getWindow().getDecorView().setSystemUiVisibility(originSystemUiVisibility);
+            View view = findViewById(R.id.root);
+            view.setFitsSystemWindows(true);
             fullscreen = false;
             fullscreenButton.setBackgroundResource(R.drawable.fullscreen);
         });
@@ -355,13 +347,13 @@ public class ControlActivity extends AppCompatActivity {
         rotateState = 0;
         super.onDestroy();
         new Thread(ScreenDecoder::stopDecode).start();
-        if(Define.direct && NettyClientDirect.INSTANCE!=null) {
+        if(Const.direct && NettyClientDirect.INSTANCE!=null) {
             NettyClientDirect.INSTANCE.interrupt();
         } else {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("type", "exitControl");
             ClientHelper.sendMessage(this, jsonObject.toJSONString());
-            Define.controlId = 0;
+            Const.controlId = 0;
         }
     }
 

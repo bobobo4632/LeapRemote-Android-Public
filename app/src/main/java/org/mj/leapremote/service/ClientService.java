@@ -10,21 +10,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.hardware.display.DisplayManager;
-import android.hardware.display.VirtualDisplay;
-import android.media.Image;
-import android.media.ImageReader;
 import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
-import android.media.MediaFormat;
-import android.media.projection.MediaProjection;
 import android.os.Binder;
 import android.os.IBinder;
-import android.view.Surface;
 import android.view.View;
 import android.widget.Toast;
 
@@ -34,15 +23,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.mask.mediaprojection.interfaces.MediaCodecCallback;
 import com.mask.mediaprojection.interfaces.ScreenCaptureCallback;
 import com.mask.mediaprojection.utils.MediaProjectionHelper;
-import org.mj.leapremote.Define;
-import org.mj.leapremote.coder.ScreenDecoder;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.cs.NettyClientWebSocket;
 import org.mj.leapremote.ui.activities.MainActivity;
 import org.mj.leapremote.R;
 import org.mj.leapremote.util.ImageUtils;
 import org.mj.leapremote.util.KeyUtil;
 import org.mj.leapremote.util.NotificationUtils;
-import org.mj.leapremote.util.Utils;
 import org.mj.leapremote.util.image.Compress;
 import org.mj.leapremote.util.image.ZipCompress;
 
@@ -90,33 +77,33 @@ public class ClientService extends Service {
     private void enabled() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "remote");
-        jsonObject.put("enabled", Define.remotePlainEnabled);
-        jsonObject.put("directEnabled", Define.remoteDirectEnabled);
+        jsonObject.put("enabled", Const.remotePlainEnabled);
+        jsonObject.put("directEnabled", Const.remoteDirectEnabled);
         sendMessage(jsonObject.toJSONString());
     }
 
     public void enableRemote() {
-        Define.remotePlainEnabled = true;
+        Const.remotePlainEnabled = true;
         //loopSendImage();
         enabled();
     }
 
     public void disableRemote() {
         send = false;
-        Define.remotePlainEnabled = false;
+        Const.remotePlainEnabled = false;
         enabled();
     }
 
     public void enableSend() {
         send = true;
         startRecord();
-        Define.isControlled = true;
+        Const.isControlled = true;
         KeyUtil.unlock(MainActivity.INSTANCE);
     }
 
     public void disableSend() {
         send = false;
-        Define.isControlled = false;
+        Const.isControlled = false;
         stopRecord();
     }
 
@@ -210,8 +197,8 @@ public class ClientService extends Service {
             jsonObject.put("first", true);
             jsonObject.put("portrait", getResources().getConfiguration().orientation==Configuration.ORIENTATION_PORTRAIT);
             jsonObject.put("hevc", MediaProjectionHelper.getInstance().isHevc());
-            jsonObject.put("width", Define.displayMetrics.widthPixels);
-            jsonObject.put("height", Define.displayMetrics.heightPixels);
+            jsonObject.put("width", Const.displayMetrics.widthPixels);
+            jsonObject.put("height", Const.displayMetrics.heightPixels);
         }
         synchronized (index) {
             jsonObject.put("index", index);
@@ -229,13 +216,13 @@ public class ClientService extends Service {
                 }*/
         int orientation = getResources().getConfiguration().orientation;
         jsonObject.put("rotate", (orientation==Configuration.ORIENTATION_LANDSCAPE
-                &&Define.displayMetrics.heightPixels>=Define.displayMetrics.widthPixels)
+                && Const.displayMetrics.heightPixels>= Const.displayMetrics.widthPixels)
                 || (orientation==Configuration.ORIENTATION_PORTRAIT
-                &&Define.displayMetrics.heightPixels<Define.displayMetrics.widthPixels));
+                && Const.displayMetrics.heightPixels< Const.displayMetrics.widthPixels));
         long start = System.currentTimeMillis();
         JSONObject send = new JSONObject();
         send.put("type", "send");
-        send.put("controlId", Define.controlId);
+        send.put("controlId", Const.controlId);
         send.put("controlled", true);
         send.put("data", jsonObject);
         client.sendMessage(send.toJSONString());
@@ -262,7 +249,7 @@ public class ClientService extends Service {
     private void loopSendImage() {
         compress = new Compress();
         new Thread(() -> {
-            while(Define.remotePlainEnabled) {
+            while(Const.remotePlainEnabled) {
                 try {
                     Thread.sleep(0);
                 } catch (InterruptedException e) {
@@ -271,7 +258,7 @@ public class ClientService extends Service {
                 while (send) {
                     doScreenCapture();
                     try {
-                        Thread.sleep(Define.wait);
+                        Thread.sleep(Const.wait);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -317,7 +304,7 @@ public class ClientService extends Service {
                 jsonObject.put("type", "image");
                 byte[] bytes = ZipCompress.compress(
                         ImageUtils.bitmapToByteArray(
-                                ImageUtils.compressBitmap(bitmap, (float)1/Define.scale), Define.quality));
+                                ImageUtils.compressBitmap(bitmap, (float)1/ Const.scale), Const.quality));
                 jsonObject.put("image", bytes);
                 System.out.println((float)((float)bytes.length/1024));
                 /*jsonObject.put("image",compress.compress(ImageUtils.byteArrayToBitmap(
@@ -331,22 +318,22 @@ public class ClientService extends Service {
                 }*/
                 int orientation = getResources().getConfiguration().orientation;
                 jsonObject.put("rotate", (orientation==Configuration.ORIENTATION_LANDSCAPE
-                        &&Define.displayMetrics.heightPixels>=Define.displayMetrics.widthPixels)
+                        && Const.displayMetrics.heightPixels>= Const.displayMetrics.widthPixels)
                         || (orientation==Configuration.ORIENTATION_PORTRAIT
-                        &&Define.displayMetrics.heightPixels<Define.displayMetrics.widthPixels));
+                        && Const.displayMetrics.heightPixels< Const.displayMetrics.widthPixels));
                 long start = System.currentTimeMillis();
                 JSONObject send = new JSONObject();
                 send.put("type", "send");
-                send.put("controlId", Define.controlId);
+                send.put("controlId", Const.controlId);
                 send.put("controlled", true);
                 send.put("data", jsonObject);
                 client.sendMessage(send.toJSONString());
                 long timeNeed = System.currentTimeMillis() - start;
-                if(Define.speedLimited) {
+                if(Const.speedLimited) {
                     long size = jsonObject.getBytes("image").length;
-                    long wait = Math.round(1000 / (Define.maxSpeed / size)) - timeNeed;
+                    long wait = Math.round(1000 / (Const.maxSpeed / size)) - timeNeed;
                     if(wait>0) {
-                        Define.wait = wait;
+                        Const.wait = wait;
                     }
                 }
             }
@@ -418,7 +405,7 @@ public class ClientService extends Service {
         jsonObject.put("portrait", portrait);
         JSONObject send = new JSONObject();
         send.put("type", "send");
-        send.put("controlId", Define.controlId);
+        send.put("controlId", Const.controlId);
         send.put("controlled", true);
         send.put("data", jsonObject);
         client.sendMessage(send.toJSONString());
@@ -466,7 +453,7 @@ public class ClientService extends Service {
                     , PendingIntent.FLAG_IMMUTABLE);
         } else {
             contentIntent = PendingIntent.getActivity(this, 1012, clickIntent
-                    , PendingIntent.FLAG_ONE_SHOT);
+                    , PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         }
         //创建一个通知消息的构造器
         Notification.Builder builder = new Notification.Builder(this);

@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONObject;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.service.HttpService;
 import org.mj.leapremote.util.DataUtil;
@@ -36,7 +36,7 @@ public class LogoActivity extends AppCompatActivity {
 
 
     public void onClickNeverShow(View view) {
-        Define.neverShowMessageDialog = messageContent;
+        Const.neverShowMessageDialog = messageContent;
         new Thread(DataUtil::save).start();
         onClickAdmit(view);
     }
@@ -56,7 +56,7 @@ public class LogoActivity extends AppCompatActivity {
                 login();
             } else {
                 readMessage = true;
-                if (!(messageContent.equals(Define.neverShowMessageDialog) || messageContent.equals("No message")))
+                if (!(messageContent.equals(Const.neverShowMessageDialog) || messageContent.equals("No message")))
                     runOnUiThread(() -> showMessage(LogoActivity.this));
                 else
                     runOnUiThread(LogoActivity.this::login);
@@ -99,7 +99,7 @@ public class LogoActivity extends AppCompatActivity {
                 return;
             }
             runOnUiThread(() -> {
-                if (s.get("force")==null || (!s.getBoolean("force") && s.getString("version").equals(Define.neverShowVersionDialog))) {
+                if (s.get("force")==null || (!s.getBoolean("force") && s.getString("version").equals(Const.neverShowVersionDialog))) {
                     login();
                 } else {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(LogoActivity.this).setTitle(R.string.newVersion).setMessage(getString(R.string.version) + ":" + s.getString("version") + "\n" + getString(R.string.content) + ":" + s.getString("description") + "\n" + (s.getBoolean("force") ? getString(R.string.forceUpdate) : "") + getString(R.string.toUpdate))
@@ -145,7 +145,7 @@ public class LogoActivity extends AppCompatActivity {
                     if (!s.getBoolean("force")) {
                         alertDialogBuilder.setNeutralButton(R.string.neverShowVersionDialog, ((dialog, which) -> {
                             new Thread(() -> {
-                                Define.neverShowVersionDialog = s.getString("version");
+                                Const.neverShowVersionDialog = s.getString("version");
                                 DataUtil.save();
                             }).start();
                             login();
@@ -179,12 +179,12 @@ public class LogoActivity extends AppCompatActivity {
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         INSTANCE = this;
-        Define.version = Utils.getVersion(this);
-        Define.displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getRealMetrics(Define.displayMetrics);
+        Const.version = Utils.getVersion(this);
+        Const.displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(Const.displayMetrics);
         setContentView(R.layout.activity_logo);
         DataUtil.sharedPreferences = getSharedPreferences("yan", MODE_PRIVATE);
-        ((TextView) findViewById(R.id.versionText)).setText(getString(R.string.version) + Define.version);
+        ((TextView) findViewById(R.id.versionText)).setText(getString(R.string.version) + Const.version);
         errorMessage = findViewById(R.id.error_message);
         TextView initializing = findViewById(R.id.initializing);
         new Thread(() -> {
@@ -216,7 +216,7 @@ public class LogoActivity extends AppCompatActivity {
             }
         }).start();
         Thread thread = new Thread(() -> {
-            while (!Define.ipGot) {
+            while (!Const.ipGot) {
                 try {
                     Thread.sleep(0);
                 } catch (InterruptedException e) {
@@ -229,7 +229,7 @@ public class LogoActivity extends AppCompatActivity {
         thread.start();
         new Thread(() -> {
             try {
-                Thread.sleep(Define.waitTimeout);
+                Thread.sleep(Const.waitTimeout);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

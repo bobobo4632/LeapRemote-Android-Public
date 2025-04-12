@@ -23,7 +23,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.ashokvarma.bottomnavigation.TextBadgeItem;
 import com.mask.mediaprojection.utils.MediaProjectionHelper;
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.LogUtil;
 import org.mj.leapremote.NotificationHelper;
 import org.mj.leapremote.R;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (!Define.agree&&!Define.isExamining)
+        if (!Const.agree&&!Const.isExamining)
             showPrivacy();
     }
 
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickAgree(View v) {
         privacyDialog.setOnDismissListener(null);
         privacyDialog.dismiss();
-        Define.agree = true;
+        Const.agree = true;
         new Thread(DataUtil::save).start();
     }
 
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             default:
-                if(!Define.serverDirect) {
+                if(!Const.serverDirect) {
                     if (resultCode == Activity.RESULT_OK) {
                         MediaProjectionHelper.getInstance().createVirtualDisplay(requestCode, resultCode, data, true, true);
                         Intent intent = new Intent(getApplicationContext(), AutoService.class);
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             getApplication().startService(intent);
                         }
-                        Define.remoteDirectEnabled = true;
+                        Const.remoteDirectEnabled = true;
                         if (mineFragment != null && mineFragment.enableDirectRemoteSwift != null)
                             mineFragment.clickOn(mineFragment.enableDirectRemoteSwift);
                         ClientHelper.enabled(this);

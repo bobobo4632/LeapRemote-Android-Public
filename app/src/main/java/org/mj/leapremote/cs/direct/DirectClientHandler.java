@@ -7,7 +7,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.R;
 import org.mj.leapremote.coder.ScreenDecoder;
 import org.mj.leapremote.ui.activities.ControlActivity;
@@ -57,9 +57,9 @@ public class DirectClientHandler extends SimpleChannelInboundHandler<Object> {
                 }
                 break;
             case "savedGestures":
-                Define.controlSavedGestures = msg.getString("savedGestures");
+                Const.controlSavedGestures = msg.getString("savedGestures");
                 if(ControlActivity.INSTANCE!=null) {
-                    ControlActivity.INSTANCE.setGestures(Define.controlSavedGestures);
+                    ControlActivity.INSTANCE.setGestures(Const.controlSavedGestures);
                 }
                 break;
             case "record":

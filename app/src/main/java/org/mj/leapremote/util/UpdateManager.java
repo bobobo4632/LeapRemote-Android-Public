@@ -9,11 +9,12 @@ import android.os.Message;
 
 import androidx.core.content.FileProvider;
 
-import org.mj.leapremote.Define;
+import org.mj.leapremote.Const;
 import org.mj.leapremote.ui.activities.LogoActivity;
 import org.mj.leapremote.ui.activities.MainActivity;
 import org.mj.leapremote.ui.fragments.MineFragment;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -103,16 +104,18 @@ public class UpdateManager
                     // 获得存储卡的路径
                     String sdpath = Environment.getExternalStorageDirectory() + "/";
                     mSavePath = sdpath + "Android/data/org.mj.leapremote";
-                    URL url = new URL(Define.server +"leapremote.apk");
+                    URL url = new URL(Const.serverAddr +"leapremote.apk");
                     // 创建连接
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    if(!Define.ipv6Support && !Utils.stringIsEmpty(Define.host))
-                        conn.setRequestProperty("Host", Define.host);
+                    if(!Const.ipv6Support && !Utils.stringIsEmpty(Const.host))
+                        conn.setRequestProperty("Host", Const.host);
+                    conn.setInstanceFollowRedirects(true);
+                    conn.setRequestMethod("GET");
                     conn.connect();
                     // 获取文件大小
                     int length = conn.getContentLength();
                     // 创建输入流
-                    InputStream is = conn.getInputStream();
+                    BufferedInputStream is = new BufferedInputStream(conn.getInputStream());
 
                     File file = new File(mSavePath);
                     // 判断文件目录是否存在

@@ -1,0 +1,149 @@
+[versions]
+agp = "8.7.3"
+android = "2.0"
+androidJob = "1.4.5"
+androidPluginApiForLocale = "1.0.4"
+annotations = "23.0.0"
+appcompat = "1.7.0"
+bcprovJdk15on = "1.57"
+bottomNavigationBar = "2.0.0"
+cardview = "1.0.0"
+circleimageview = "2.1.0"
+constraintlayout = "2.2.0"
+core = "3.5.3"
+coreVersion = "1.9.8"
+desugar_jdk_libs = "2.1.4"
+dnsjava = "2.1.7"
+editorkit = "2.9.0"
+editorkitVersion = "2.0.0"
+fab = "1.6.4"
+fabprogresscircle = "1.01"
+fastjson = "1.1.55.android"
+fastscroll = "0.2.3"
+flexbox = "3.0.0"
+gradleLicensePlugin = "0.9.8"
+gridlayout = "1.0.0"
+gson = "2.11.0"
+iconicsCore = "5.3.0"
+jsr305 = "3.0.2"
+kotlin = "2.1.0"
+coreKtx = "1.15.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+languageJson = "2.9.0"
+languageBase = "2.9.0"
+languageJsonVersion = "2.0.0"
+lifecycleExtensions = "2.2.0"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.9.3"
+lombok = "1.18.30"
+lsettingviewlibrary = "1.3.0"
+material = "1.12.0"
+materialdrawer = "8.4.3"
+materialVersion = "1.4.0"
+mmkvStatic = "1.3.11"
+mockitoInline = "4.0.0"
+mockitoKotlin = "4.0.0"
+multidex = "2.0.1"
+okhttp = "4.10.0"
+ormliteAndroid = "5.6"
+playServicesAds = "23.6.0"
+playServicesAnalytics = "18.1.1"
+playServicesAnalyticsVersion = "18.0.1"
+preferenceKtx = "1.2.1"
+quickieFoss = "1.13.1"
+recyclerview = "1.3.2"
+recyclerviewVersion = "1.2.1"
+runtime = "1.7.6"
+rxandroid = "3.0.2"
+rxandroidVersion = "1.2.1"
+rxjava = "3.1.9"
+rxjavaVersion = "1.3.4"
+rxpermissions = "0.12"
+rxpermissionsVersion = "0.9.4"
+toastcompat = "1.1.0"
+viewpager2 = "1.1.0"
+workRuntimeKtx = "2.10.0"
+workMultiprocess = "2.10.0"
+workRuntimeKtxVersion = "2.7.1"
+zxing = "1.9.13"
+
+[libraries]
+android = { module = "net.glxn.qrgen:android", version.ref = "android" }
+android-job = { module = "com.github.devv911:android-job", version.ref = "androidJob" }
+android-plugin-api-locale = { module = "com.twofortyfouram:android-plugin-api-for-locale", version.ref = "androidPluginApiForLocale" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "activityCompose" }
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityCompose" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-gridlayout = { module = "androidx.gridlayout:gridlayout", version.ref = "gridlayout" }
+androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExtensions" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
+androidx-preference = { module = "androidx.preference:preference", version.ref = "preferenceKtx" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
+androidx-recyclerview-v121 = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerviewVersion" }
+androidx-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "runtime" }
+androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
+androidx-work-multiprocess = { module = "androidx.work:work-multiprocess", version.ref = "workMultiprocess" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-work-runtime-ktx-v271 = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+barcodescanner-core = { module = "me.dm7.barcodescanner:core", version.ref = "coreVersion" }
+bcprov-jdk15on = { module = "org.bouncycastle:bcprov-jdk15on", version.ref = "bcprovJdk15on" }
+bottom-navigation-bar = { module = "com.ashokvarma.android:bottom-navigation-bar", version.ref = "bottomNavigationBar" }
+circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+core = { module = "com.google.zxing:core", version.ref = "core" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+dnsjava = { module = "dnsjava:dnsjava", version.ref = "dnsjava" }
+editorkit = { module = "com.blacksquircle.ui:editorkit", version.ref = "editorkit" }
+editorkit-v200 = { module = "com.blacksquircle.ui:editorkit", version.ref = "editorkitVersion" }
+fab = { module = "com.github.clans:fab", version.ref = "fab" }
+fabprogresscircle = { module = "com.github.jorgecastilloprz:fabprogresscircle", version.ref = "fabprogresscircle" }
+fastjson = { module = "com.alibaba:fastjson", version.ref = "fastjson" }
+fastscroll = { module = "com.futuremind.recyclerfastscroll:fastscroll", version.ref = "fastscroll" }
+flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
+gradle-license-plugin = { module = "com.jaredsburrows:gradle-license-plugin", version.ref = "gradleLicensePlugin" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+iconics-core = { module = "com.mikepenz:iconics-core", version.ref = "iconicsCore" }
+jsr305 = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+language-base = { module = "com.blacksquircle.ui:language-base", version.ref = "languageBase" }
+language-json = { module = "com.blacksquircle.ui:language-json", version.ref = "languageJson" }
+language-json-v200 = { module = "com.blacksquircle.ui:language-json", version.ref = "languageJsonVersion" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+lsettingviewlibrary = { module = "com.leon:lsettingviewlibrary", version.ref = "lsettingviewlibrary" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+material-v140 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
+materialdrawer = { module = "com.mikepenz:materialdrawer", version.ref = "materialdrawer" }
+mmkv-static = { module = "com.tencent:mmkv-static", version.ref = "mmkvStatic" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+ormlite-android = { module = "com.j256.ormlite:ormlite-android", version.ref = "ormliteAndroid" }
+play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
+play-services-analytics = { module = "com.google.android.gms:play-services-analytics", version.ref = "playServicesAnalyticsVersion" }
+quickie-foss = { module = "com.github.T8RIN.QuickieExtended:quickie-foss", version.ref = "quickieFoss" }
+reactivex-rxandroid = { module = "io.reactivex:rxandroid", version.ref = "rxandroidVersion" }
+reactivex-rxjava = { module = "io.reactivex:rxjava", version.ref = "rxjavaVersion" }
+rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
+rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
+rxpermissions = { module = "com.github.tbruyelle:rxpermissions", version.ref = "rxpermissions" }
+tbruyelle-rxpermissions = { module = "com.tbruyelle.rxpermissions:rxpermissions", version.ref = "rxpermissionsVersion" }
+toastcompat = { module = "me.drakeet.support:toastcompat", version.ref = "toastcompat" }
+zxing = { module = "me.dm7.barcodescanner:zxing", version.ref = "zxing" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
